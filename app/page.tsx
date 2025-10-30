@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Search,
   Grid3x3,
@@ -460,6 +460,19 @@ export default function ExtensionMarketplace() {
   );
   const [isSearchActive, setIsSearchActive] = useState(false);
 
+  // Helper function to update URL parameters
+  const updateURL = (updates: Record<string, string | null>) => {
+    const url = new URL(window.location.href);
+    for (const [key, val] of Object.entries(updates)) {
+      if (val) {
+        url.searchParams.set(key, val);
+      } else {
+        url.searchParams.delete(key);
+      }
+    }
+    window.history.pushState({}, '', url.toString());
+  };
+
   // Flatten all extensions from different categories
   const allExtensions = useMemo(() => {
     const extensions: Extension[] = [];
@@ -469,6 +482,26 @@ export default function ExtensionMarketplace() {
     extensions.push(...extensionsData.decorators);
     return extensions;
   }, []);
+
+  // URL handling on mount and popstate
+  useEffect(() => {
+    const handlePopstate = () => {
+      const params = new URLSearchParams(window.location.search);
+      const extParam = params.get('extension');
+      const extension = extParam ? allExtensions.find(e => e.package_name === extParam) || null : null;
+      setSelectedExtension(extension);
+      const searchParam = params.get('search') || '';
+      setSearchQuery(searchParam);
+      if (searchParam.trim().length >= 2) {
+        setIsSearchActive(true);
+      } else if (!searchParam.trim()) {
+        setIsSearchActive(false);
+      }
+    };
+    handlePopstate(); // initial load
+    window.addEventListener('popstate', handlePopstate);
+    return () => window.removeEventListener('popstate', handlePopstate);
+  }, [allExtensions]);
 
   // Get top 3 recommended extensions
   const topExtensions = useMemo(() => {
@@ -491,26 +524,18 @@ export default function ExtensionMarketplace() {
 
   const handleSearch = (value: string) => {
     setSearchQuery(value);
-    if (value.trim().length >= 2) {
-      setIsSearchActive(true);
-    } else if (!value.trim()) {
-      setIsSearchActive(false);
-    }
+    setIsSearchActive(value.trim().length >= 2);
+    updateURL({search: value.trim() || null});
   };
 
   const openExtensionDetail = (extension: Extension) => {
     setSelectedExtension(extension);
-    // Update URL for sharing
-    window.history.pushState(
-      {},
-      "",
-      `?extension=${encodeURIComponent(extension.package_name)}`
-    );
+    updateURL({extension: extension.package_name});
   };
 
   const closeExtensionDetail = () => {
     setSelectedExtension(null);
-    window.history.pushState({}, "", window.location.pathname);
+    updateURL({extension: null});
   };
 
   return (
