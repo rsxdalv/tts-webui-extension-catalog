@@ -80,7 +80,7 @@ export default function ExtensionMarketplace() {
 
   const closeExtensionDetail = () => {
     setSelectedExtension(null)
-    window.history.pushState({}, "", "/")
+    window.history.pushState({}, "", window.location.pathname)
   }
 
   return (
