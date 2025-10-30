@@ -1,0 +1,20 @@
+{
+  "tabsInGroups": {
+    "external": [
+      {
+        "package_name": "tts_webui_extension.parakeet",
+        "name": "Parakeet",
+        "requirements": "git+https://github.com/mefich/tts_webui_extension.parakeet@main",
+        "description": "Speech transcription via Nvidia Parakeet model",
+        "extension_type": "interface",
+        "extension_class": "tools",
+        "author": "mefi",
+        "extension_author": "mefi",
+        "license": "BSD-3",
+        "website": "https://github.com/mefich/tts_webui_extension.parakeet",
+        "extension_website": "https://github.com/mefich/tts_webui_extension.parakeet",
+        "extension_platform_version": "0.0.1"
+      }
+    ]
+  }
+}
