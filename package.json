@@ -4,11 +4,10 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "export": "next export",
     "dev": "next dev",
     "lint": "eslint .",
     "start": "next start",
-    "export:build": "pnpm run build && pnpm run export"
+    "export:build": "pnpm run build"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
