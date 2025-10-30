@@ -10,6 +10,24 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { extensionsData } from "@/lib/extensions-data"
 import type { Extension } from "@/lib/types"
 
+// JSON syntax highlighting with spans
+function formatJson(obj: any): string {
+  const jsonString = JSON.stringify(obj, null, 2)
+  const lines = jsonString.split('\n')
+  const formattedLines = lines.map(line => {
+    // Key highlighting (before colon)
+    line = line.replace(/"([^"]*)"(\s*:\s*)/g, '<span style="color: #259addff;">"$1"</span>$2')
+    // String value highlighting
+    line = line.replace(/:\s*"([^"]*)"([,\s]*$)/g, ': <span style="color: #ecb234ff;">"$1"</span>$2')
+    // Number highlighting
+    line = line.replace(/:\s*(-?\d+\.?\d*)([,\s]*$)/g, ': <span style="color: #21f3b4ff;">$1</span>$2')
+    // Boolean/null highlighting
+    line = line.replace(/:\s*(true|false|null)([,\s]*$)/g, ': <span style="color: #ff9800;">$1</span>$2')
+    return line
+  })
+  return formattedLines.join('\n')
+}
+
 export default function ExtensionMarketplace() {
   const [searchQuery, setSearchQuery] = useState("")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
@@ -240,7 +258,7 @@ export default function ExtensionMarketplace() {
 
       {/* Extension Detail Modal */}
       <Dialog open={!!selectedExtension} onOpenChange={(open) => !open && closeExtensionDetail()}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl lg:max-w-5xl xl:max-w-7xl max-h-[90vh] overflow-y-auto">
           {selectedExtension && (
             <>
               <DialogHeader className="space-y-4">
@@ -261,68 +279,82 @@ export default function ExtensionMarketplace() {
                 </DialogDescription>
               </DialogHeader>
 
-              <div className="space-y-8 pt-6">
-                {/* Authors Section */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Authors</h3>
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <div className="text-sm text-muted-foreground">Original Author</div>
-                      <div className="font-medium">{selectedExtension.author}</div>
-                    </div>
-                    <div className="space-y-1">
-                      <div className="text-sm text-muted-foreground">Extension Author</div>
-                      <div className="font-medium">{selectedExtension.extension_author}</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Technical Details */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Technical Details</h3>
-                  <div className="space-y-3">
-                    <div className="space-y-1">
-                      <div className="text-sm text-muted-foreground">Package Name</div>
-                      <code className="text-sm bg-muted px-2 py-1 rounded">{selectedExtension.package_name}</code>
-                    </div>
-                    <div className="space-y-1">
-                      <div className="text-sm text-muted-foreground">Requirements</div>
-                      <code className="text-sm bg-muted px-2 py-1 rounded block break-all">
-                        {selectedExtension.requirements}
-                      </code>
-                    </div>
+              <div className="grid lg:grid-cols-2 gap-8 space-y-8 lg:space-y-0 pt-6">
+                {/* Left Column - Main Content */}
+                <div className="space-y-8">
+                  {/* Authors Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold">Authors</h3>
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <div className="text-sm text-muted-foreground">License</div>
-                        <div className="font-medium">{selectedExtension.license}</div>
+                        <div className="text-sm text-muted-foreground">Original Author</div>
+                        <div className="font-medium">{selectedExtension.author}</div>
                       </div>
                       <div className="space-y-1">
-                        <div className="text-sm text-muted-foreground">Platform Version</div>
-                        <div className="font-medium">{selectedExtension.extension_platform_version}</div>
+                        <div className="text-sm text-muted-foreground">Extension Author</div>
+                        <div className="font-medium">{selectedExtension.extension_author}</div>
                       </div>
+                    </div>
+                  </div>
+
+                  {/* Technical Details */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold">Technical Details</h3>
+                    <div className="space-y-3">
+                      <div className="space-y-1">
+                        <div className="text-sm text-muted-foreground">Package Name</div>
+                        <code className="text-sm bg-muted px-2 py-1 rounded">{selectedExtension.package_name}</code>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-sm text-muted-foreground">Requirements</div>
+                        <code className="text-sm bg-muted px-2 py-1 rounded block break-all">
+                          {selectedExtension.requirements}
+                        </code>
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <div className="text-sm text-muted-foreground">License</div>
+                          <div className="font-medium">{selectedExtension.license}</div>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="text-sm text-muted-foreground">Platform Version</div>
+                          <div className="font-medium">{selectedExtension.extension_platform_version}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Links */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold">Links</h3>
+                    <div className="flex flex-wrap gap-3">
+                      <Button variant="outline" asChild>
+                        <a href={selectedExtension.extension_website} target="_blank" rel="noopener noreferrer">
+                          <Github className="h-4 w-4 mr-2" />
+                          Extension Repository
+                          <ExternalLink className="h-3 w-3 ml-2" />
+                        </a>
+                      </Button>
+                      {selectedExtension.website !== selectedExtension.extension_website && (
+                        <Button variant="outline" asChild>
+                          <a href={selectedExtension.website} target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            Original Project
+                          </a>
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
 
-                {/* Links */}
+                {/* Right Column - Install Data */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Links</h3>
-                  <div className="flex flex-wrap gap-3">
-                    <Button variant="outline" asChild>
-                      <a href={selectedExtension.extension_website} target="_blank" rel="noopener noreferrer">
-                        <Github className="h-4 w-4 mr-2" />
-                        Extension Repository
-                        <ExternalLink className="h-3 w-3 ml-2" />
-                      </a>
-                    </Button>
-                    {selectedExtension.website !== selectedExtension.extension_website && (
-                      <Button variant="outline" asChild>
-                        <a href={selectedExtension.website} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="h-4 w-4 mr-2" />
-                          Original Project
-                        </a>
-                      </Button>
-                    )}
+                  <h3 className="text-lg font-semibold">Install Data</h3>
+                  <div className="space-y-2 text-xs">
+                    <div className="text-muted-foreground">JSON Configuration</div>
+                    <pre className="bg-muted p-4 rounded-md overflow-x-hidden font-mono leading-relaxed">
+                      <code dangerouslySetInnerHTML={{ __html: formatJson(selectedExtension) }} />
+                    </pre>
                   </div>
                 </div>
               </div>
