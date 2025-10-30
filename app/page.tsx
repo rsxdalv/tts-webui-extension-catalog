@@ -47,8 +47,10 @@ export default function ExtensionMarketplace() {
 
   const handleSearch = (value: string) => {
     setSearchQuery(value)
-    if (value.trim()) {
+    if (value.trim().length >= 2) {
       setIsSearchActive(true)
+    } else if (!value.trim()) {
+      setIsSearchActive(false)
     }
   }
 
@@ -98,6 +100,7 @@ export default function ExtensionMarketplace() {
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
                 onFocus={() => searchQuery && setIsSearchActive(true)}
+                autoFocus
                 className="pl-12 h-14 text-lg bg-card border-border"
               />
             </div>
@@ -143,13 +146,14 @@ export default function ExtensionMarketplace() {
             <div className="flex gap-4 items-center">
               <div className="relative flex-1 max-w-2xl">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input
-                  type="text"
-                  placeholder="Search extensions..."
-                  value={searchQuery}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  className="pl-12 h-12 bg-card border-border"
-                />
+              <Input
+                type="text"
+                placeholder="Search extensions..."
+                value={searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+                autoFocus
+                className="pl-12 h-12 bg-card border-border"
+              />
               </div>
               <div className="flex gap-2">
                 <Button
