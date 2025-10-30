@@ -70,7 +70,7 @@ function Header() {
               TTS
             </span>
           </div>
-          <h1 className="text-xl font-semibold">Extension Marketplace</h1>
+          <h1 className="text-xl font-semibold">WebUI Extension Marketplace</h1>
         </div>
       </div>
     </header>
@@ -96,7 +96,7 @@ function LandingPageView({
       <div className="max-w-3xl mx-auto text-center space-y-8">
         <div className="space-y-4">
           <h2 className="text-5xl font-bold tracking-tight text-balance">
-            Discover TTS Extensions
+            Discover TTS WebUI Extensions
           </h2>
           <p className="text-xl text-muted-foreground text-balance">
             Enhance your Text-to-Speech WebUI with powerful extensions from the
