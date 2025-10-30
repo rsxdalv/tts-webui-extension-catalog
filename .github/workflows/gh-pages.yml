@@ -2,12 +2,14 @@ name: Build and deploy to GitHub Pages
 
 on:
   push:
-    paths:
-      - 'extensions.json'
-      - 'components.json'
-      - 'lib/**'
-      - 'app/**'
-      - 'public/**'
+    # paths:
+    #   - 'extensions.json'
+    #   - 'components.json'
+    #   - 'lib/**'
+    #   - 'app/**'
+    #   - 'public/**'
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
