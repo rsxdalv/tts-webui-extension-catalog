@@ -81,13 +81,15 @@ function Header() {
 function LandingPageView({
   searchQuery,
   onSearchChange,
-  onSearchFocus,
+  onActivateBrowse,
+  onCategorySelect,
   topExtensions,
   onOpenExtensionDetail,
 }: {
   searchQuery: string;
   onSearchChange: (value: string) => void;
-  onSearchFocus: () => void;
+  onActivateBrowse: () => void;
+  onCategorySelect: (category: string) => void;
   topExtensions: Extension[];
   onOpenExtensionDetail: (extension: Extension) => void;
 }) {
@@ -109,13 +111,30 @@ function LandingPageView({
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
             type="text"
-            placeholder="Search extensions..."
+            placeholder="Search or browse all extensions..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            onFocus={onSearchFocus}
+            onFocus={onActivateBrowse}
+            onClick={onActivateBrowse}
             autoFocus
-            className="pl-12 h-14 text-lg bg-card border-border"
+            className="pl-12 h-14 text-lg bg-card border-border cursor-pointer"
           />
+        </div>
+
+        {/* Category Tabs */}
+        <div className="pt-8">
+          <div className="flex flex-wrap gap-2 justify-center">
+            {CATEGORIES.map((cat) => (
+              <Button
+                key={cat.key}
+                variant="outline"
+                size="sm"
+                onClick={() => onCategorySelect(cat.key)}
+              >
+                {cat.label}
+              </Button>
+            ))}
+          </div>
         </div>
 
         {/* Top 3 Extensions */}
@@ -156,6 +175,20 @@ function LandingPageView({
   );
 }
 
+// Category type and labels
+const CATEGORIES = [
+  { key: "all", label: "All Extensions" },
+  { key: "text-to-speech", label: "Text-to-Speech" },
+  { key: "audio-music-generation", label: "Audio & Music" },
+  { key: "audio-conversion", label: "Audio Conversion" },
+  { key: "conversational-ai", label: "Conversational AI" },
+  { key: "tools", label: "Tools" },
+  { key: "settings", label: "Settings" },
+  { key: "outputs", label: "Outputs" },
+  { key: "tutorials", label: "Tutorials" },
+  { key: "decorators", label: "Decorators" },
+] as const;
+
 // Search Results Component
 function SearchResultsView({
   searchQuery,
@@ -164,6 +197,8 @@ function SearchResultsView({
   onViewModeChange,
   filteredExtensions,
   onOpenExtensionDetail,
+  selectedCategory,
+  onCategoryChange,
 }: {
   searchQuery: string;
   onSearchChange: (value: string) => void;
@@ -171,6 +206,8 @@ function SearchResultsView({
   onViewModeChange: (mode: "grid" | "list") => void;
   filteredExtensions: Extension[];
   onOpenExtensionDetail: (extension: Extension) => void;
+  selectedCategory: string;
+  onCategoryChange: (category: string) => void;
 }) {
   return (
     <main className="container mx-auto px-4 py-8">
@@ -205,6 +242,21 @@ function SearchResultsView({
             </Button>
           </div>
         </div>
+
+        {/* Category Filter Tabs */}
+        <div className="flex flex-wrap gap-2">
+          {CATEGORIES.map((cat) => (
+            <Button
+              key={cat.key}
+              variant={selectedCategory === cat.key ? "default" : "outline"}
+              size="sm"
+              onClick={() => onCategoryChange(cat.key)}
+            >
+              {cat.label}
+            </Button>
+          ))}
+        </div>
+
         <div className="text-sm text-muted-foreground">
           {filteredExtensions.length} extension
           {filteredExtensions.length !== 1 ? "s" : ""} found
@@ -459,6 +511,7 @@ export default function ExtensionMarketplace() {
     null
   );
   const [isSearchActive, setIsSearchActive] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   // Helper function to update URL parameters
   const updateURL = (updates: Record<string, string | null>) => {
@@ -483,6 +536,18 @@ export default function ExtensionMarketplace() {
     return extensions;
   }, []);
 
+  // Get extensions by category
+  const getExtensionsByCategory = useMemo(() => {
+    return (category: string) => {
+      if (category === "all") return allExtensions;
+      if (category === "decorators") return extensionsData.decorators;
+      if (category in extensionsData.tabsInGroups) {
+        return extensionsData.tabsInGroups[category as keyof typeof extensionsData.tabsInGroups];
+      }
+      return [];
+    };
+  }, [allExtensions]);
+
   // URL handling on mount and popstate
   useEffect(() => {
     const handlePopstate = () => {
@@ -492,9 +557,12 @@ export default function ExtensionMarketplace() {
       setSelectedExtension(extension);
       const searchParam = params.get('search') || '';
       setSearchQuery(searchParam);
-      if (searchParam.trim().length >= 2) {
+      const categoryParam = params.get('category') || 'all';
+      setSelectedCategory(categoryParam);
+      const browseParam = params.get('browse');
+      if (browseParam === 'true' || searchParam.trim().length >= 2) {
         setIsSearchActive(true);
-      } else if (!searchParam.trim()) {
+      } else if (!searchParam.trim() && browseParam !== 'true') {
         setIsSearchActive(false);
       }
     };
@@ -508,24 +576,43 @@ export default function ExtensionMarketplace() {
     return allExtensions.filter((ext) => ext.recommended).slice(0, 3);
   }, [allExtensions]);
 
-  // Filter extensions based on search
+  // Filter extensions based on search and category
   const filteredExtensions = useMemo(() => {
-    if (!searchQuery.trim()) return allExtensions;
+    // First filter by category
+    const categoryExtensions = getExtensionsByCategory(selectedCategory);
+    
+    // Then filter by search query if present
+    if (!searchQuery.trim()) return categoryExtensions;
 
     const query = searchQuery.toLowerCase();
-    return allExtensions.filter(
+    return categoryExtensions.filter(
       (ext) =>
         ext.name.toLowerCase().includes(query) ||
         ext.description.toLowerCase().includes(query) ||
         ext.extension_class.toLowerCase().includes(query) ||
         ext.author.toLowerCase().includes(query)
     );
-  }, [searchQuery, allExtensions]);
+  }, [searchQuery, selectedCategory, getExtensionsByCategory]);
 
   const handleSearch = (value: string) => {
     setSearchQuery(value);
-    setIsSearchActive(value.trim().length >= 2);
-    updateURL({search: value.trim() || null});
+    updateURL({search: value.trim() || null, browse: 'true'});
+  };
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    updateURL({category: category === 'all' ? null : category});
+  };
+
+  const activateBrowseMode = () => {
+    setIsSearchActive(true);
+    updateURL({browse: 'true'});
+  };
+
+  const handleCategorySelect = (category: string) => {
+    setSelectedCategory(category);
+    setIsSearchActive(true);
+    updateURL({category: category === 'all' ? null : category, browse: 'true'});
   };
 
   const openExtensionDetail = (extension: Extension) => {
@@ -545,7 +632,8 @@ export default function ExtensionMarketplace() {
         <LandingPageView
           searchQuery={searchQuery}
           onSearchChange={handleSearch}
-          onSearchFocus={() => searchQuery && setIsSearchActive(true)}
+          onActivateBrowse={activateBrowseMode}
+          onCategorySelect={handleCategorySelect}
           topExtensions={topExtensions}
           onOpenExtensionDetail={openExtensionDetail}
         />
@@ -557,6 +645,8 @@ export default function ExtensionMarketplace() {
           onViewModeChange={setViewMode}
           filteredExtensions={filteredExtensions}
           onOpenExtensionDetail={openExtensionDetail}
+          selectedCategory={selectedCategory}
+          onCategoryChange={handleCategoryChange}
         />
       )}
       <ExtensionDetailModal
