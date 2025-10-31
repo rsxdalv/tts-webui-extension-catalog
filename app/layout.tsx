@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description: "Discover and explore Text-to-Speech WebUI extensions",
   generator: "v0.app",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/tts-webui-extension-catalog/favicon.ico",
   },
 }
 
