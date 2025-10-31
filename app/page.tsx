@@ -450,10 +450,8 @@ export default function ExtensionMarketplace() {
     return (category: string) => {
       if (category === "all") return allExtensions;
       if (category === "decorators") return extensionsData.decorators;
-      if (category in extensionsData.tabsInGroups) {
-        return extensionsData.tabsInGroups[category as keyof typeof extensionsData.tabsInGroups];
-      }
-      return [];
+      // Filter by extension_class property rather than storage location
+      return allExtensions.filter(ext => ext.extension_class === category);
     };
   }, [allExtensions]);
 
