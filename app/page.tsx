@@ -503,7 +503,13 @@ export default function ExtensionMarketplace() {
 
   const handleSearch = (value: string) => {
     setSearchQuery(value);
-    updateURL({search: value.trim() || null, browse: 'true'});
+    // Activate browse mode when user types (at least 1 character)
+    if (value.trim().length > 0 || isSearchActive) {
+      setIsSearchActive(true);
+      updateURL({search: value.trim() || null, browse: 'true'});
+    } else {
+      updateURL({search: value.trim() || null, browse: 'true'});
+    }
   };
 
   const handleCategoryChange = (category: string) => {
