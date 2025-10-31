@@ -60,118 +60,79 @@ function formatJson(obj: any): string {
 }
 
 // Header Component
-function Header() {
+function Header({ onLogoClick }: { onLogoClick: () => void }) {
   return (
     <header className="border-b border-border">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <button 
+          onClick={onLogoClick}
+          className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer"
+        >
           <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
             <span className="text-primary-foreground font-bold text-sm">
               TTS
             </span>
           </div>
           <h1 className="text-xl font-semibold">WebUI Extension Marketplace</h1>
-        </div>
+        </button>
       </div>
     </header>
   );
 }
 
-// Landing Page Component
-function LandingPageView({
-  searchQuery,
-  onSearchChange,
-  onActivateBrowse,
-  onCategorySelect,
+// Landing Page Content (Featured Extensions)
+function LandingPageContent({
   topExtensions,
   onOpenExtensionDetail,
+  isActive,
 }: {
-  searchQuery: string;
-  onSearchChange: (value: string) => void;
-  onActivateBrowse: () => void;
-  onCategorySelect: (category: string) => void;
   topExtensions: Extension[];
   onOpenExtensionDetail: (extension: Extension) => void;
+  isActive: boolean;
 }) {
   return (
-    <main className="container mx-auto px-4 py-20">
-      <div className="max-w-3xl mx-auto text-center space-y-8">
-        <div className="space-y-4">
-          <h2 className="text-5xl font-bold tracking-tight text-balance">
-            Discover TTS WebUI Extensions
-          </h2>
-          <p className="text-xl text-muted-foreground text-balance">
-            Enhance your Text-to-Speech WebUI with powerful extensions from the
-            community
-          </p>
+    <div 
+      className={`transition-all duration-500 ease-in-out ${
+        isActive 
+          ? 'opacity-100 scale-100' 
+          : 'opacity-0 scale-95 pointer-events-none absolute inset-x-0'
+      }`}
+      style={{ transitionProperty: 'opacity, transform' }}
+    >
+      {/* Featured Extensions */}
+      <div className="pt-8">
+        <div className="flex items-center justify-center gap-2 mb-6">
+          <Award className="h-5 w-5 text-primary" />
+          <h3 className="text-lg font-semibold">Featured Extensions</h3>
         </div>
-
-        {/* Search Bar */}
-        <div className="relative max-w-2xl mx-auto">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-          <Input
-            type="text"
-            placeholder="Search or browse all extensions..."
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            onFocus={onActivateBrowse}
-            onClick={onActivateBrowse}
-            autoFocus
-            className="pl-12 h-14 text-lg bg-card border-border cursor-pointer"
-          />
-        </div>
-
-        {/* Category Tabs */}
-        <div className="pt-8">
-          <div className="flex flex-wrap gap-2 justify-center">
-            {CATEGORIES.map((cat) => (
-              <Button
-                key={cat.key}
-                variant="outline"
-                size="sm"
-                onClick={() => onCategorySelect(cat.key)}
-              >
-                {cat.label}
-              </Button>
-            ))}
-          </div>
-        </div>
-
-        {/* Top 3 Extensions */}
-        <div className="pt-12">
-          <div className="flex items-center justify-center gap-2 mb-6">
-            <Award className="h-5 w-5 text-primary" />
-            <h3 className="text-lg font-semibold">Featured Extensions</h3>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {topExtensions.map((extension) => (
-              <Card
-                key={extension.package_name}
-                className="cursor-pointer hover:border-primary transition-colors"
-                onClick={() => onOpenExtensionDetail(extension)}
-              >
-                <CardHeader>
-                  <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-lg">{extension.name}</CardTitle>
-                    <Badge variant="secondary" className="shrink-0">
-                      {extension.extension_class}
-                    </Badge>
-                  </div>
-                  <CardDescription className="line-clamp-2">
-                    {extension.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <span>by {extension.extension_author}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+        <div className="grid md:grid-cols-3 gap-6">
+          {topExtensions.map((extension) => (
+            <Card
+              key={extension.package_name}
+              className="cursor-pointer hover:border-primary transition-colors"
+              onClick={() => onOpenExtensionDetail(extension)}
+            >
+              <CardHeader>
+                <div className="flex items-start justify-between gap-2">
+                  <CardTitle className="text-lg">{extension.name}</CardTitle>
+                  <Badge variant="secondary" className="shrink-0">
+                    {extension.extension_class}
+                  </Badge>
+                </div>
+                <CardDescription className="line-clamp-2">
+                  {extension.description}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <span>by {extension.extension_author}</span>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
-    </main>
+    </div>
   );
 }
 
@@ -189,79 +150,27 @@ const CATEGORIES = [
   { key: "decorators", label: "Decorators" },
 ] as const;
 
-// Search Results Component
-function SearchResultsView({
-  searchQuery,
-  onSearchChange,
+// Search Results Content (Grid/List only)
+function SearchResultsContent({
   viewMode,
-  onViewModeChange,
   filteredExtensions,
   onOpenExtensionDetail,
-  selectedCategory,
-  onCategoryChange,
+  isActive,
 }: {
-  searchQuery: string;
-  onSearchChange: (value: string) => void;
   viewMode: "grid" | "list";
-  onViewModeChange: (mode: "grid" | "list") => void;
   filteredExtensions: Extension[];
   onOpenExtensionDetail: (extension: Extension) => void;
-  selectedCategory: string;
-  onCategoryChange: (category: string) => void;
+  isActive: boolean;
 }) {
   return (
-    <main className="container mx-auto px-4 py-8">
-      {/* Search Bar + Controls */}
-      <div className="mb-8 space-y-4">
-        <div className="flex gap-4 items-center">
-          <div className="relative flex-1 max-w-2xl">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search extensions..."
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-              autoFocus
-              className="pl-12 h-12 bg-card border-border"
-            />
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant={viewMode === "grid" ? "default" : "outline"}
-              size="icon"
-              onClick={() => onViewModeChange("grid")}
-            >
-              <Grid3x3 className="h-4 w-4" />
-            </Button>
-            <Button
-              variant={viewMode === "list" ? "default" : "outline"}
-              size="icon"
-              onClick={() => onViewModeChange("list")}
-            >
-              <List className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-
-        {/* Category Filter Tabs */}
-        <div className="flex flex-wrap gap-2">
-          {CATEGORIES.map((cat) => (
-            <Button
-              key={cat.key}
-              variant={selectedCategory === cat.key ? "default" : "outline"}
-              size="sm"
-              onClick={() => onCategoryChange(cat.key)}
-            >
-              {cat.label}
-            </Button>
-          ))}
-        </div>
-
-        <div className="text-sm text-muted-foreground">
-          {filteredExtensions.length} extension
-          {filteredExtensions.length !== 1 ? "s" : ""} found
-        </div>
-      </div>
+    <div 
+      className={`transition-all duration-500 ease-in-out ${
+        isActive 
+          ? 'opacity-100 scale-100' 
+          : 'opacity-0 scale-95 pointer-events-none absolute inset-x-0'
+      }`}
+      style={{ transitionProperty: 'opacity, transform' }}
+    >
 
       {/* Results Grid/List */}
       {viewMode === "grid" ? (
@@ -335,7 +244,7 @@ function SearchResultsView({
           ))}
         </div>
       )}
-    </main>
+    </div>
   );
 }
 
@@ -625,30 +534,124 @@ export default function ExtensionMarketplace() {
     updateURL({extension: null});
   };
 
+  const returnToLanding = () => {
+    setIsSearchActive(false);
+    setSearchQuery('');
+    setSelectedCategory('all');
+    updateURL({browse: null, search: null, category: null});
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      {!isSearchActive ? (
-        <LandingPageView
-          searchQuery={searchQuery}
-          onSearchChange={handleSearch}
-          onActivateBrowse={activateBrowseMode}
-          onCategorySelect={handleCategorySelect}
-          topExtensions={topExtensions}
-          onOpenExtensionDetail={openExtensionDetail}
-        />
-      ) : (
-        <SearchResultsView
-          searchQuery={searchQuery}
-          onSearchChange={handleSearch}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-          filteredExtensions={filteredExtensions}
-          onOpenExtensionDetail={openExtensionDetail}
-          selectedCategory={selectedCategory}
-          onCategoryChange={handleCategoryChange}
-        />
-      )}
+      <Header onLogoClick={returnToLanding} />
+      <main className={`container mx-auto px-4 transition-all duration-500 ease-in-out ${
+        isSearchActive ? 'py-8' : 'py-20'
+      }`}>
+        {/* Shared Search Section */}
+        <div className={`mx-auto transition-all duration-500 ease-in-out ${
+          isSearchActive ? 'max-w-full mb-8' : 'max-w-3xl text-center mb-0'
+        }`}>
+          <div className={`transition-all duration-500 ease-in-out ${
+            isSearchActive ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100 mb-8'
+          }`}>
+            <div className="space-y-4">
+              <h2 className="text-5xl font-bold tracking-tight text-balance">
+                Discover TTS WebUI Extensions
+              </h2>
+              <p className="text-xl text-muted-foreground text-balance">
+                Enhance your Text-to-Speech WebUI with powerful extensions from the
+                community
+              </p>
+            </div>
+          </div>
+
+          {/* Search Bar with Controls */}
+          <div className={`space-y-4 transition-all duration-500 ease-in-out ${
+            isSearchActive ? '' : 'text-center'
+          }`}>
+            {/* Search Input + View Mode Buttons */}
+            <div className="flex gap-4 items-center">
+              <div className={`relative flex-1 transition-all duration-500 ease-in-out ${
+                isSearchActive ? 'max-w-2xl' : 'max-w-2xl mx-auto'
+              }`}>
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none z-10" />
+                <Input
+                  type="text"
+                  placeholder={isSearchActive ? "Search extensions..." : "Search or browse all extensions..."}
+                  value={searchQuery}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  onFocus={activateBrowseMode}
+                  onClick={activateBrowseMode}
+                  autoFocus
+                  className={`pl-12 bg-card border-border transition-all duration-500 ease-in-out ${
+                    isSearchActive ? 'h-12' : 'h-14 text-lg cursor-pointer'
+                  }`}
+                />
+              </div>
+              {/* View Mode Buttons - only visible in browse mode */}
+              <div className={`flex gap-2 transition-all duration-300 ease-in-out ${
+                isSearchActive ? 'opacity-100' : 'opacity-0 w-0 overflow-hidden pointer-events-none'
+              }`}>
+                <Button
+                  variant={viewMode === "grid" ? "default" : "outline"}
+                  size="icon"
+                  onClick={() => setViewMode("grid")}
+                >
+                  <Grid3x3 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === "list" ? "default" : "outline"}
+                  size="icon"
+                  onClick={() => setViewMode("list")}
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Category Tabs - visible in both modes */}
+            <div className={`flex flex-wrap gap-2 transition-all duration-500 ease-in-out ${
+              isSearchActive ? '' : 'justify-center'
+            }`}>
+              {CATEGORIES.map((cat) => (
+                <Button
+                  key={cat.key}
+                  variant={selectedCategory === cat.key && isSearchActive ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => isSearchActive ? handleCategoryChange(cat.key) : handleCategorySelect(cat.key)}
+                >
+                  {cat.label}
+                </Button>
+              ))}
+            </div>
+
+            {/* Results Count - only visible in browse mode */}
+            <div className={`text-sm text-muted-foreground transition-all duration-300 ease-in-out ${
+              isSearchActive ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'
+            }`}>
+              {filteredExtensions.length} extension
+              {filteredExtensions.length !== 1 ? "s" : ""} found
+            </div>
+          </div>
+        </div>
+
+        {/* Content Area with Transitions */}
+        <div className="relative">
+          <div className={`${isSearchActive ? 'max-w-full' : 'max-w-3xl mx-auto text-center'}`}>
+            <LandingPageContent
+              topExtensions={topExtensions}
+              onOpenExtensionDetail={openExtensionDetail}
+              isActive={!isSearchActive}
+            />
+            <SearchResultsContent
+              viewMode={viewMode}
+              filteredExtensions={filteredExtensions}
+              onOpenExtensionDetail={openExtensionDetail}
+              isActive={isSearchActive}
+            />
+          </div>
+        </div>
+      </main>
       <ExtensionDetailModal
         selectedExtension={selectedExtension}
         onClose={closeExtensionDetail}
