@@ -8,6 +8,7 @@ import {
   ExternalLink,
   Github,
   Award,
+  Download,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,25 @@ import {
 } from "@/components/ui/dialog";
 import { extensionsData } from "@/lib/extensions-data";
 import type { Extension } from "@/lib/types";
+
+// Hook to detect if the app is embedded in an iframe
+function useIsEmbedded() {
+  const [isEmbedded, setIsEmbedded] = useState(false);
+
+  useEffect(() => {
+    // Check query parameter
+    const params = new URLSearchParams(window.location.search);
+    const embeddedParam = params.get('embedded') === 'true';
+    
+    // Check if actually in an iframe
+    const inIframe = window.self !== window.top;
+    
+    // Set embedded if either condition is true
+    setIsEmbedded(embeddedParam || inIframe);
+  }, []);
+
+  return isEmbedded;
+}
 
 // JSON syntax highlighting with spans
 function formatJson(obj: any): string {
@@ -252,10 +272,23 @@ function SearchResultsContent({
 function ExtensionDetailModal({
   selectedExtension,
   onClose,
+  isEmbedded,
 }: {
   selectedExtension: Extension | null;
   onClose: () => void;
+  isEmbedded: boolean;
 }) {
+  // Handler for Install Extension button
+  const handleInstallExtension = () => {
+    if (!selectedExtension) return;
+    
+    // Send extension data to parent window via postMessage
+    window.parent.postMessage({
+      type: 'install-extension',
+      data: selectedExtension
+    }, '*');
+  };
+
   return (
     <Dialog
       open={!!selectedExtension}
@@ -361,6 +394,12 @@ function ExtensionDetailModal({
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold">Links</h3>
                   <div className="flex flex-wrap gap-3">
+                    {isEmbedded && (
+                      <Button onClick={handleInstallExtension}>
+                        <Download className="h-4 w-4 mr-2" />
+                        Install Extension
+                      </Button>
+                    )}
                     <Button variant="outline" asChild>
                       <a
                         href={selectedExtension.extension_website}
@@ -421,6 +460,7 @@ export default function ExtensionMarketplace() {
   );
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const isEmbedded = useIsEmbedded();
 
   // Helper function to update URL parameters
   const updateURL = (updates: Record<string, string | null>) => {
@@ -659,6 +699,7 @@ export default function ExtensionMarketplace() {
       <ExtensionDetailModal
         selectedExtension={selectedExtension}
         onClose={closeExtensionDetail}
+        isEmbedded={isEmbedded}
       />
     </div>
   );
