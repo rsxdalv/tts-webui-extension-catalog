@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Extension Catalog Embed Test</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    
+    h1 {
+      color: #333;
+    }
+    
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    #catalog-iframe {
+      width: 100%;
+      height: 800px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    #message-log {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+      border-radius: 8px;
+      height: 800px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    #message-log h2 {
+      color: #fff;
+      margin-top: 0;
+      font-size: 16px;
+      border-bottom: 1px solid #444;
+      padding-bottom: 10px;
+    }
+    
+    .message {
+      margin: 10px 0;
+      padding: 10px;
+      background: #252526;
+      border-left: 3px solid #007acc;
+      border-radius: 4px;
+      word-wrap: break-word;
+    }
+    
+    .timestamp {
+      color: #858585;
+      font-size: 11px;
+      margin-bottom: 5px;
+    }
+    
+    .message-type {
+      color: #4ec9b0;
+      font-weight: bold;
+    }
+    
+    .message-data {
+      color: #ce9178;
+      margin-top: 5px;
+      white-space: pre-wrap;
+    }
+    
+    .status {
+      background: #007acc;
+      color: white;
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔌 Extension Catalog Embed Test</h1>
+  <div class="status">
+    Listening for postMessage events from the iframe below. Click "Install Extension" in the catalog to see the message appear in the log →
+  </div>
+  
+  <div class="container">
+    <div>
+      <iframe 
+        id="catalog-iframe"
+        src="http://localhost:3000/tts-webui-extension-catalog/?embedded=true"
+        title="Extension Catalog">
+      </iframe>
+    </div>
+    
+    <div id="message-log">
+      <h2>📨 Message Log</h2>
+      <div id="messages">
+        <div style="color: #858585; font-style: italic;">
+          Waiting for messages...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const messagesDiv = document.getElementById('messages');
+    let messageCount = 0;
+
+    // Listen for messages from the iframe
+    window.addEventListener('message', (event) => {
+      // In production, verify the origin:
+      // if (event.origin !== 'http://localhost:3000') return;
+      
+      if (event.data.type === 'install-extension') {
+        messageCount++;
+        
+        // Clear "waiting" message on first message
+        if (messageCount === 1) {
+          messagesDiv.innerHTML = '';
+        }
+        
+        const extension = event.data.data;
+        
+        // Log the message
+        logMessage(event.data);
+        
+        // Show confirmation dialog
+        const confirmed = confirm(
+          `Install Extension?\n\n` +
+          `Name: ${extension.name}\n` +
+          `Author: ${extension.extension_author}\n` +
+          `Type: ${extension.extension_type}\n` +
+          `Class: ${extension.extension_class}\n\n` +
+          `Click OK to simulate installation.`
+        );
+        
+        if (confirmed) {
+          // Simulate installation
+          simulateInstallation(extension);
+        }
+      }
+    });
+
+    function logMessage(messageData) {
+      const timestamp = new Date().toLocaleTimeString();
+      const messageEl = document.createElement('div');
+      messageEl.className = 'message';
+      messageEl.innerHTML = `
+        <div class="timestamp">${timestamp}</div>
+        <div class="message-type">Type: ${messageData.type}</div>
+        <div class="message-data">${JSON.stringify(messageData.data, null, 2)}</div>
+      `;
+      messagesDiv.appendChild(messageEl);
+      
+      // Scroll to bottom
+      document.getElementById('message-log').scrollTop = 
+        document.getElementById('message-log').scrollHeight;
+    }
+
+    async function simulateInstallation(extension) {
+      console.log('Installing extension:', extension);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Log success
+      const successMsg = document.createElement('div');
+      successMsg.className = 'message';
+      successMsg.style.borderLeftColor = '#4ec9b0';
+      successMsg.innerHTML = `
+        <div class="timestamp">${new Date().toLocaleTimeString()}</div>
+        <div style="color: #4ec9b0; font-weight: bold;">✓ Installation Successful</div>
+        <div style="color: #d4d4d4; margin-top: 5px;">
+          ${extension.name} has been installed
+        </div>
+      `;
+      messagesDiv.appendChild(successMsg);
+      
+      // Scroll to bottom
+      document.getElementById('message-log').scrollTop = 
+        document.getElementById('message-log').scrollHeight;
+      
+      alert(`✓ ${extension.name} installed successfully!`);
+    }
+  </script>
+</body>
+</html>
