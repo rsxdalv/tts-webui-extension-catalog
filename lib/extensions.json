@@ -503,6 +503,20 @@
                 "extension_platform_version": "0.0.1"
             },
             {
+                "package_name": "tts_webui_extension.acestep15",
+                "name": "ACE-Step 1.5",
+                "requirements": "git+https://github.com/rsxdalv/tts_webui_extension.acestep15@tts-webui",
+                "description": "The most powerful local music generation model that outperforms most commercial alternatives, supporting Mac, AMD, Intel, and CUDA devices.",
+                "extension_type": "interface",
+                "extension_class": "audio-music-generation",
+                "author": "ACE-Step",
+                "extension_author": "rsxdalv",
+                "license": "MIT",
+                "website": "https://github.com/ACE-Step/ACE-Step-1.5",
+                "extension_website": "https://github.com/rsxdalv/tts_webui_extension.acestep15",
+                "extension_platform_version": "0.0.1"
+            },
+            {
                 "package_name": "tts_webui_extension.stable_audio",
                 "recommended": true,
                 "name": "Stable Audio",
