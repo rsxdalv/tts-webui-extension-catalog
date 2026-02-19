@@ -395,10 +395,16 @@ function ExtensionDetailModal({
                   <h3 className="text-lg font-semibold">Links</h3>
                   <div className="flex flex-wrap gap-3">
                     {isEmbedded && (
-                      <Button onClick={handleInstallExtension}>
-                        <Download className="h-4 w-4 mr-2" />
-                        Install Extension
-                      </Button>
+                      selectedExtension.package_name?.startsWith("extensions.builtin.") ? (
+                        <Button disabled>
+                          Cannot be installed
+                        </Button>
+                      ) : (
+                        <Button onClick={handleInstallExtension}>
+                          <Download className="h-4 w-4 mr-2" />
+                          Install Extension
+                        </Button>
+                      )
                     )}
                     <Button variant="outline" asChild>
                       <a
