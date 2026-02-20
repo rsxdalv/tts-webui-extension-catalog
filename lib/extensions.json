@@ -505,7 +505,7 @@
             {
                 "package_name": "tts_webui_extension.acestep15",
                 "name": "ACE-Step 1.5",
-                "requirements": "git+https://github.com/rsxdalv/tts_webui_extension.acestep15@tts-webui",
+                "requirements": "git+https://github.com/rsxdalv/tts_webui_extension.acestep15@main",
                 "description": "The most powerful local music generation model that outperforms most commercial alternatives, supporting Mac, AMD, Intel, and CUDA devices.",
                 "extension_type": "interface",
                 "extension_class": "audio-music-generation",
