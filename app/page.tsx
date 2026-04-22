@@ -34,6 +34,7 @@ export default function ExtensionMarketplace() {
   );
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [hideBuiltins, setHideBuiltins] = useState(true);
   const isEmbedded = useIsEmbedded();
 
   // Helper function to update URL parameters
@@ -56,8 +57,11 @@ export default function ExtensionMarketplace() {
       extensions.push(...group);
     });
     extensions.push(...extensionsData.decorators);
+    if (hideBuiltins) {
+      return extensions.filter((ext) => !ext.package_name.startsWith("extensions.builtin."));
+    }
     return extensions;
-  }, []);
+  }, [hideBuiltins]);
 
   // Get extensions by category
   const getExtensionsByCategory = useMemo(() => {
@@ -280,12 +284,23 @@ export default function ExtensionMarketplace() {
 
             {/* Results Count - only visible in browse mode */}
             <div
-              className={`text-sm text-muted-foreground transition-all duration-300 ease-in-out ${
+              className={`text-sm text-muted-foreground transition-all duration-300 ease-in-out flex items-center gap-4 ${
                 isSearchActive ? "opacity-100" : "opacity-0 h-0 overflow-hidden"
               }`}
             >
-              {filteredExtensions.length} extension
-              {filteredExtensions.length !== 1 ? "s" : ""} found
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={hideBuiltins}
+                  onChange={(e) => setHideBuiltins(e.target.checked)}
+                  className="w-4 h-4"
+                />
+                Hide built-in extensions
+              </label>
+              <span>
+                {filteredExtensions.length} extension
+                {filteredExtensions.length !== 1 ? "s" : ""} found
+              </span>
             </div>
           </div>
         </div>
