@@ -1,4 +1,4 @@
-import { Award } from "lucide-react";
+import { Award, Star, Cpu } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -29,9 +29,13 @@ export function ExtensionCardGrid({
             <CardTitle className="text-base leading-tight">
               {extension.name}
             </CardTitle>
-            {extension.recommended && (
-              <Award className="h-4 w-4 text-primary shrink-0" />
-            )}
+            <div className="flex items-center gap-1 shrink-0">
+              {extension.featured && <Award className="h-4 w-4 text-primary" />}
+              {extension.proxy === "native" && (
+                <Cpu className="h-4 w-4 text-muted-foreground" />
+              )}
+              {extension.recommended && <Star className="h-4 w-4 text-primary" />}
+            </div>
           </div>
           <Badge variant="secondary" className="text-xs">
             {extension.extension_class}
@@ -64,9 +68,11 @@ export function ExtensionCardList({
           <div className="flex-1 space-y-2">
             <div className="flex items-center gap-3">
               <CardTitle className="text-lg">{extension.name}</CardTitle>
-              {extension.recommended && (
-                <Award className="h-4 w-4 text-primary" />
+              {extension.featured && <Award className="h-4 w-4 text-primary" />}
+              {extension.proxy === "native" && (
+                <Cpu className="h-4 w-4 text-muted-foreground" />
               )}
+              {extension.recommended && <Star className="h-4 w-4 text-primary" />}
               <Badge variant="secondary" className="text-xs">
                 {extension.extension_class}
               </Badge>

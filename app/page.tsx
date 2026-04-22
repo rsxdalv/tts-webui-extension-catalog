@@ -98,9 +98,9 @@ export default function ExtensionMarketplace() {
     return () => window.removeEventListener("popstate", handlePopstate);
   }, [allExtensions]);
 
-  // Get top 3 recommended extensions
-  const topExtensions = useMemo(() => {
-    return allExtensions.filter((ext) => ext.recommended).slice(0, 3);
+  // Get top 3 featured extensions
+  const featuredExtensions = useMemo(() => {
+    return allExtensions.filter((ext) => ext.featured).slice(0, 3);
   }, [allExtensions]);
 
   // Filter extensions based on search and category
@@ -311,7 +311,7 @@ export default function ExtensionMarketplace() {
             className={`${isSearchActive ? "max-w-full" : "max-w-3xl mx-auto text-center"}`}
           >
             <FeaturedExtensionsGrid
-              topExtensions={topExtensions}
+              featuredExtensions={featuredExtensions}
               onOpenExtensionDetail={openExtensionDetail}
               isActive={!isSearchActive}
             />

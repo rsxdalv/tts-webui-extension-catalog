@@ -3,13 +3,13 @@ import { ExtensionCardGrid } from "./ExtensionCard";
 import type { Extension } from "@/lib/types";
 
 interface FeaturedExtensionsGridProps {
-  topExtensions: Extension[];
+  featuredExtensions: Extension[];
   onOpenExtensionDetail: (extension: Extension) => void;
   isActive: boolean;
 }
 
 export function FeaturedExtensionsGrid({
-  topExtensions,
+  featuredExtensions,
   onOpenExtensionDetail,
   isActive,
 }: FeaturedExtensionsGridProps) {
@@ -28,15 +28,19 @@ export function FeaturedExtensionsGrid({
           <Award className="h-5 w-5 text-primary" />
           <h3 className="text-lg font-semibold">Featured Extensions</h3>
         </div>
-        <div className="grid md:grid-cols-3 gap-6">
-          {topExtensions.map((extension) => (
-            <ExtensionCardGrid
-              key={extension.package_name}
-              extension={extension}
-              onClick={() => onOpenExtensionDetail(extension)}
-            />
-          ))}
-        </div>
+        {featuredExtensions.length > 0 ? (
+          <div className="grid md:grid-cols-3 gap-6">
+            {featuredExtensions.map((extension) => (
+              <ExtensionCardGrid
+                key={extension.package_name}
+                extension={extension}
+                onClick={() => onOpenExtensionDetail(extension)}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">No featured extensions</p>
+        )}
       </div>
     </div>
   );

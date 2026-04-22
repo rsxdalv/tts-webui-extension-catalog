@@ -12,6 +12,8 @@ export interface Extension {
   extension_website: string
   extension_platform_version: string
   recommended?: boolean
+  featured?: boolean
+  proxy?: string
 }
 
 export interface ExtensionData {
