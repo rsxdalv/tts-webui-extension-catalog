@@ -2,13 +2,13 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { Search, Grid3x3, List } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Header } from "@/components/Header";
-import { LandingPageContent } from "@/components/LandingPageContent";
-import { SearchResultsContent } from "@/components/SearchResultsContent";
-import { ExtensionDetailModal } from "@/components/ExtensionDetailModal";
-import { useIsEmbedded } from "@/components/hooks/useIsEmbedded";
+import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
+import { Header } from "../components/Header";
+import { FeaturedExtensionsGrid } from "../components/FeaturedExtensionsGrid";
+import { SearchResultsContent } from "../components/SearchResultsContent";
+import { ExtensionDetailModal } from "../components/ExtensionDetailModal";
+import { useIsEmbedded } from "../components/hooks/useIsEmbedded";
 import { extensionsData } from "@/lib/extensions-data";
 import type { Extension } from "@/lib/types";
 
@@ -295,7 +295,7 @@ export default function ExtensionMarketplace() {
           <div
             className={`${isSearchActive ? "max-w-full" : "max-w-3xl mx-auto text-center"}`}
           >
-            <LandingPageContent
+            <FeaturedExtensionsGrid
               topExtensions={topExtensions}
               onOpenExtensionDetail={openExtensionDetail}
               isActive={!isSearchActive}
