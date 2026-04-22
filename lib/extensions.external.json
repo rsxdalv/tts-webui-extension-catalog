@@ -70,6 +70,51 @@
         "website": "https://github.com/rsxdalv/tts_webui_extension.pip_install_ui",
         "extension_website": "https://github.com/rsxdalv/tts_webui_extension.pip_install_ui",
         "extension_platform_version": "0.0.1"
+      },
+      {
+        "package_name": "tts_webui_extension.omnivoice",
+        "name": "Omnivoice",
+        "requirements": "git+https://github.com/rsxdalv/tts_webui_extension.omnivoice@main",
+        "description": "State-of-the-art massive multilingual zero-shot text-to-speech model supporting 600+ languages with voice cloning and voice design.",
+        "extension_type": "interface",
+        "extension_class": "text-to-speech",
+        "author": "Xiaomi Next-gen Kaldi team",
+        "extension_author": "rsxdalv",
+        "license": "MIT",
+        "website": "https://github.com/k2-fsa/OmniVoice",
+        "extension_website": "https://github.com/rsxdalv/tts_webui_extension.omnivoice",
+        "extension_platform_version": "0.0.1",
+        "featured": true
+      },
+      {
+        "package_name": "tts_webui_extension.acestep15",
+        "name": "ACE-Step 1.5",
+        "requirements": "git+https://github.com/rsxdalv/tts_webui_extension.acestep15@main",
+        "description": "The most powerful local music generation model that outperforms most commercial alternatives, supporting Mac, AMD, Intel, and CUDA devices.",
+        "extension_type": "interface",
+        "extension_class": "audio-music-generation",
+        "author": "ACE-Step",
+        "extension_author": "rsxdalv",
+        "license": "MIT",
+        "website": "https://github.com/ACE-Step/ACE-Step-1.5",
+        "extension_website": "https://github.com/rsxdalv/tts_webui_extension.acestep15",
+        "extension_platform_version": "0.0.1",
+        "featured": true
+      },
+      {
+        "package_name": "tts_webui_extension.foundation1",
+        "name": "Foundation-1",
+        "requirements": "git+https://github.com/rsxdalv/tts_webui_extension.foundation1@main",
+        "description": "Foundation-1 music generation model by RoyalCities, built on stable-audio-tools",
+        "extension_type": "interface",
+        "extension_class": "audio-music-generation",
+        "author": "RoyalCities",
+        "extension_author": "rsxdalv",
+        "license": "MIT",
+        "website": "https://huggingface.co/RoyalCities/Foundation-1",
+        "extension_website": "https://github.com/rsxdalv/tts_webui_extension.foundation1",
+        "extension_platform_version": "0.0.1",
+        "featured": true
       }
     ]
   }
