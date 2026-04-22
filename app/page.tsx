@@ -58,7 +58,9 @@ export default function ExtensionMarketplace() {
     });
     extensions.push(...extensionsData.decorators);
     if (hideBuiltins) {
-      return extensions.filter((ext) => !ext.package_name.startsWith("extensions.builtin."));
+      return extensions.filter(
+        (ext) => !ext.package_name.startsWith("extensions.builtin."),
+      );
     }
     return extensions;
   }, [hideBuiltins]);
@@ -172,8 +174,14 @@ export default function ExtensionMarketplace() {
     <div className="min-h-screen bg-background">
       <Header onLogoClick={returnToLanding} />
       <main
-        className={`container mx-auto px-4 transition-all duration-500 ease-in-out ${
-          isSearchActive ? "py-8" : "py-20"
+        className={`container mx-auto transition-all duration-500 ease-in-out ${
+          isSearchActive
+            ? isEmbedded
+              ? "px-2 py-2"
+              : "px-4 py-8"
+            : isEmbedded
+              ? "px-2 py-8"
+              : "px-4 py-20"
         }`}
       >
         {/* Shared Search Section */}
