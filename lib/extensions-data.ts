@@ -9,11 +9,11 @@ import externalData from "./extensions.external.json"
 // - For `tabsInGroups` and `tabs` (objects) we merge their nested properties.
 // - For `decorators` (arrays) we concatenate base + external.
 const merged = {
-  ...(baseData as any),
   ...(externalData as any),
-  tabsInGroups: { ...(baseData.tabsInGroups ?? {}), ...(externalData.tabsInGroups ?? {}) },
-  tabs: { ...(baseData.tabs ?? {}), ...(externalData.tabs ?? {}) },
-  decorators: [ ...(baseData.decorators ?? []), ...(externalData.decorators ?? []) ],
+  ...(baseData as any),
+  tabsInGroups: { ...(externalData.tabsInGroups ?? {}), ...(baseData.tabsInGroups ?? {}) },
+  tabs: { ...(externalData.tabs ?? {}), ...(baseData.tabs ?? {}) },
+  decorators: [ ...(externalData.decorators ?? []), ...(baseData.decorators ?? []) ],
 }
 
 export const extensionsData: ExtensionData = merged as ExtensionData
