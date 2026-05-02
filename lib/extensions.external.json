@@ -73,7 +73,7 @@
       },
       {
         "package_name": "tts_webui_extension.omnivoice",
-        "name": "Omnivoice",
+        "name": "Omnivoice (uv)",
         "requirements": "git+https://github.com/rsxdalv/tts_webui_extension.omnivoice@main",
         "description": "State-of-the-art massive multilingual zero-shot text-to-speech model supporting 600+ languages with voice cloning and voice design.",
         "extension_type": "interface",
@@ -84,7 +84,8 @@
         "website": "https://github.com/k2-fsa/OmniVoice",
         "extension_website": "https://github.com/rsxdalv/tts_webui_extension.omnivoice",
         "extension_platform_version": "0.0.1",
-        "featured": true
+        "featured": true,
+        "proxy": "native"
       },
       {
         "package_name": "tts_webui_extension.acestep15",
@@ -115,6 +116,23 @@
         "extension_website": "https://github.com/rsxdalv/tts_webui_extension.foundation1",
         "extension_platform_version": "0.0.1",
         "featured": true,
+        "proxy": "native"
+      }
+    ],
+    "broken": [
+      {
+        "package_name": "tts_webui_extension.audiocraft_plus",
+        "name": "AudioCraft Plus (uv)",
+        "requirements": "git+https://github.com/rsxdalv/tts_webui_extension.audiocraft_plus@main",
+        "description": "AudioCraft Plus is an all-in-one WebUI for the original AudioCraft, adding many quality features on top.",
+        "extension_type": "interface",
+        "extension_class": "audio-music-generation",
+        "author": "GrandaddyShmax",
+        "extension_author": "rsxdalv",
+        "license": "MIT",
+        "website": "https://github.com/GrandaddyShmax/audiocraft_plus",
+        "extension_website": "https://github.com/rsxdalv/tts_webui_extension.audiocraft_plus",
+        "extension_platform_version": "0.0.1",
         "proxy": "native"
       },
       {
